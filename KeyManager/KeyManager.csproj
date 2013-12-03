@@ -7,8 +7,8 @@
     <ProjectGuid>{DD01448B-1F35-446F-B2D7-7CADE505FBA0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>net_key_manager</RootNamespace>
-    <AssemblyName>net-key-manager</AssemblyName>
+    <RootNamespace>KeyManager</RootNamespace>
+    <AssemblyName>KeyManager</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
@@ -114,6 +114,9 @@
     <Compile Include="Key.cs" />
     <Compile Include="KeyManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KeyManager.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
