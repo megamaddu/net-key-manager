@@ -54,7 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\net-key-manager\net-key-manager.csproj">
+    <ProjectReference Include="..\KeyManager\KeyManager.csproj">
       <Project>{dd01448b-1f35-446f-b2d7-7cade505fba0}</Project>
       <Name>net-key-manager</Name>
     </ProjectReference>
