@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,44 +12,78 @@ namespace KeyManager
 {
 	public class Key
 	{
-		protected static ConcurrentDictionary<string, string> __keyCache = new ConcurrentDictionary<string, string>();
+		protected string _path;
+		protected string _privSuffix;
+		protected string _pubSuffix;
+		protected string _privPemSuffix;
+		protected string _pubPemSuffix;
+		protected X509Certificate2 _priv;
+		protected X509Certificate2 _pub;
+		protected string _privPem;
+		protected string _pubPem;
 
-		protected string _privPath;
-		protected string _pubPath;
-
-		public Task<string> Priv
+		public X509Certificate2 Priv
 		{
 			get
 			{
-				return LoadKey(_privPath);
+				if (_priv != null) return _priv;
+				if (_privSuffix == null) return null;
+				return _priv = LoadKey(_privSuffix);
 			}
 		}
 
-		public Task<string> Pub
+		public X509Certificate2 Pub
 		{
 			get
 			{
-				return LoadKey(_pubPath);
+				if (_pub != null) return _pub;
+				if (_pubSuffix == null) return null;
+				return _pub = LoadKey(_pubSuffix);
 			}
 		}
 
-		internal Key(string privPath, string pubPath)
+		public string PrivPem
 		{
-			_privPath = privPath;
-			_pubPath = pubPath;
+			get
+			{
+				if (_privPem != null) return _privPem;
+				if (_privPemSuffix == null) return null;
+				return _privPem = LoadPemKey(_privPemSuffix);
+			}
 		}
 
-		protected Task<string> LoadKey(string path)
+		public string PubPem
 		{
-			return path == null ?
-				Task.FromResult<string>(null)
-				: __keyCache.GetOrAddAsync(path, async k =>
-					{
-						using (StreamReader SourceReader = File.OpenText(k))
-						{
-							return await SourceReader.ReadToEndAsync().ConfigureAwait(false);
-						}
-					});
+			get
+			{
+				if (_pubPem != null) return _pubPem;
+				if (_pubPemSuffix == null) return null;
+				return _pubPem = LoadPemKey(_pubPemSuffix);
+			}
+		}
+
+		internal Key(string path, string privSuffix, string pubSuffix, string privPemSuffix, string pubPemSuffix)
+		{
+			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(path));
+
+			_path = path;
+			_privSuffix = privSuffix;
+			_pubSuffix = pubSuffix;
+			_privPemSuffix = privPemSuffix;
+			_pubPemSuffix = pubPemSuffix;
+		}
+
+		protected X509Certificate2 LoadKey(string suffix)
+		{
+			return new X509Certificate2(Path.Combine(_path, suffix));
+		}
+
+		protected string LoadPemKey(string suffix)
+		{
+			using (StreamReader SourceReader = File.OpenText(Path.Combine(_path, suffix)))
+			{
+				return SourceReader.ReadToEnd();
+			}
 		}
 	}
 }

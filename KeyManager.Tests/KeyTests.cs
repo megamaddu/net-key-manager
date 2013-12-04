@@ -10,21 +10,24 @@ namespace KeyManager.Tests
 		public void ReturnsPublicKeys()
 		{
 			var keys = new KeyManager("keytest", "keytestenv");
-			Assert.IsFalse(string.IsNullOrWhiteSpace(keys["otherapp"].Pub.Result));
+			Assert.IsNotNull(keys["otherapp"].Pub);
+			Assert.IsFalse(string.IsNullOrWhiteSpace(keys["otherapp"].PubPem));
 		}
 
 		[TestMethod]
 		public void ReturnsPrivateKeys()
 		{
 			var keys = new KeyManager("keytest", "keytestenv");
-			Assert.IsFalse(string.IsNullOrWhiteSpace(keys["keytest"].Priv.Result));
+			Assert.IsNotNull(keys["keytest"].Priv);
+			Assert.IsFalse(string.IsNullOrWhiteSpace(keys["keytest"].PrivPem));
 		}
 
 		[TestMethod]
 		public void DoesNotReturnPrivateKeysForOtherApps()
 		{
 			var keys = new KeyManager("keytest", "keytestenv");
-			Assert.IsTrue(string.IsNullOrWhiteSpace(keys["otherapp"].Priv.Result));
+			Assert.IsNull(keys["otherapp"].Priv);
+			Assert.IsTrue(string.IsNullOrWhiteSpace(keys["otherapp"].PrivPem));
 		}
 	}
 }

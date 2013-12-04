@@ -11,21 +11,26 @@ namespace KeyManager
 {
 	public class KeyManager
 	{
+		protected ConcurrentDictionary<string, Key> _keyCache = new ConcurrentDictionary<string, Key>();
 		protected string _keyDir;
 		protected string _app;
-		protected string _privsuffix;
-		protected string _pubsuffix;
+		protected string _privSuffix;
+		protected string _pubSuffix;
+		protected string _pemPrivSuffix;
+		protected string _pemPubSuffix;
 
-		public KeyManager(string app, string env, string keyDir = null, string privsuffix = "key", string pubsuffix = "key.pub")
+		public KeyManager(string app, string env, string keyDir = null, string privSuffix = "key.crt", string pubSuffix = "key.cer", string pemPrivSuffix = "key", string pemPubSuffix = "key.pub")
 		{
 			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(app));
 			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(env));
-			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(privsuffix));
-			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(pubsuffix));
+			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(privSuffix));
+			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(pubSuffix));
 
 			_app = app;
-			_privsuffix = privsuffix;
-			_pubsuffix = pubsuffix;
+			_privSuffix = privSuffix;
+			_pubSuffix = pubSuffix;
+			_pemPrivSuffix = pemPrivSuffix;
+			_pemPubSuffix = pemPubSuffix;
 			if (_keyDir == null)
 			{
 				_keyDir = Path.Combine(keyDir ?? Environment.GetEnvironmentVariable("UserProfileKeyDir") ?? Path.Combine(Environment.GetEnvironmentVariable("UserProfile"), ".keys"), env);
@@ -38,14 +43,22 @@ namespace KeyManager
 		{
 			get
 			{
-				if (string.IsNullOrWhiteSpace(tcid))
-				{
-					return new Key(null, null);
-				}
-				var privPath = _app.Equals(tcid) ? Path.Combine(_keyDir, tcid, _privsuffix) : null;
-				var pubPath = Path.Combine(_keyDir, tcid, _pubsuffix);
-				return new Key(privPath, pubPath);
+				return Get(tcid);
 			}
+		}
+
+		public Key Get(string tcid)
+		{
+			if (string.IsNullOrWhiteSpace(tcid))
+			{
+				return null;
+			}
+			return _keyCache.GetOrAdd(tcid, k =>
+			{
+				var path = Path.Combine(_keyDir, k);
+				var isPrivate = _app.Equals(k);
+				return new Key(path, !isPrivate ? null : _privSuffix, _pubSuffix, !isPrivate ? null : _pemPrivSuffix, _pemPubSuffix);
+			});
 		}
 	}
 }
