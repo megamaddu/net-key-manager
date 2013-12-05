@@ -19,7 +19,7 @@ namespace KeyManager
 		protected string _pemPrivSuffix;
 		protected string _pemPubSuffix;
 
-		public KeyManager(string app, string env, string keyDir = null, string privSuffix = "key.crt", string pubSuffix = "key.cer", string pemPrivSuffix = "key", string pemPubSuffix = "key.pub")
+		public KeyManager(string app, string env, string keyDir = null, string privSuffix = "key.pfx", string pubSuffix = "key.cer", string pemPrivSuffix = "key", string pemPubSuffix = "key.pub")
 		{
 			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(app));
 			Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(env));
