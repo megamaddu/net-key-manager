@@ -11,6 +11,7 @@ namespace KeyManager.Tests
 		{
 			var keys = new KeyManager("keytest", "keytestenv");
 			Assert.IsNotNull(keys["otherapp"].Pub);
+			Assert.IsFalse(keys["otherapp"].Pub.HasPrivateKey);
 			Assert.IsFalse(string.IsNullOrWhiteSpace(keys["otherapp"].PubPem));
 		}
 
@@ -19,6 +20,7 @@ namespace KeyManager.Tests
 		{
 			var keys = new KeyManager("keytest", "keytestenv");
 			Assert.IsNotNull(keys["keytest"].Priv);
+			Assert.IsTrue(keys["keytest"].Priv.HasPrivateKey);
 			Assert.IsFalse(string.IsNullOrWhiteSpace(keys["keytest"].PrivPem));
 		}
 

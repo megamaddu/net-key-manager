@@ -31,12 +31,17 @@ namespace KeyManager
 			_pubSuffix = pubSuffix;
 			_pemPrivSuffix = pemPrivSuffix;
 			_pemPubSuffix = pemPubSuffix;
+		
 			if (_keyDir == null)
 			{
-				_keyDir = Path.Combine(keyDir ?? Environment.GetEnvironmentVariable("UserProfileKeyDir") ?? Path.Combine(Environment.GetEnvironmentVariable("UserProfile"), ".keys"), env);
+				_keyDir = Path.Combine(keyDir
+					?? Environment.GetEnvironmentVariable("UserProfileKeyDir", EnvironmentVariableTarget.User)
+					?? Environment.GetEnvironmentVariable("UserProfileKeyDir", EnvironmentVariableTarget.Machine)
+					?? Path.Combine(Environment.GetEnvironmentVariable("UserProfile"), ".keys"),
+					env);
 			}
 
-			Contract.Assert(Directory.Exists(_keyDir));
+			Contract.Assert(Directory.Exists(_keyDir), "Directory does not exist: " + _keyDir);
 		}
 
 		public Key this[string tcid]
